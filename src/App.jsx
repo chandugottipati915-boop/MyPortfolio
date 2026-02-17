@@ -349,11 +349,6 @@ export default function Website() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-5">
-                  <Button variant="outline" className="w-full">
-                    Add repo link
-                  </Button>
-                </div>
               </Card>
             </motion.div>
           ))}
