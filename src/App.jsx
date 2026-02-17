@@ -393,7 +393,7 @@ export default function Website() {
 
             <div className="mt-4 space-y-3 text-sm text-white/90">
               <div>
-                Email: <Anchor href="mailto:chandugottipati@gmail.com">chandugottipati@gmail.com</Anchor>
+                Email: <Anchor href="mailto:chandugottipati915@gmail.com">chandugottipati915@gmail.com</Anchor>
               </div>
               <div>
                 LinkedIn: <Anchor href="https://www.linkedin.com/in/gopichand-gottipati-987a02229/">linkedin.com/in/gopichand</Anchor>
