@@ -318,7 +318,7 @@ export default function Website() {
                 LinkedIn: <Anchor href="https://www.linkedin.com/in/gopichand-gottipati-987a02229/">linkedin.com/in/gopichand</Anchor>
               </div>
               <div>
-                Email: <Anchor href="mailto:chandugottipati@gmail.com">chandugottipati@gmail.com</Anchor>
+                Email: <Anchor href="mailto:chandugottipati915@gmail.com">chandugottipati915@gmail.com</Anchor>
               </div>
              
             </div>
