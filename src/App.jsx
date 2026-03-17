@@ -1,8 +1,6 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-
-// ✅ Preview-safe version (no shadcn, no @/ alias, no recharts)
-// Works in simple React preview environments.
+import { Mail, Phone, MapPin, ExternalLink, Briefcase, Code2, BarChart3, User2 } from "lucide-react";
 
 const nav = [
   { id: "home", label: "Home" },
@@ -14,109 +12,90 @@ const nav = [
 
 const projects = [
   {
-    title: "Data Lakehouse Implementation (Databricks)",
-    tag: "Databricks · Delta Lake · Medallion Architecture",
-    description:
-      "Designed and implemented a scalable data lakehouse using Databricks and Delta Lake following the Medallion architecture.",
-    bullets: [
-      "Built end-to-end ETL pipelines using PySpark and SQL (Bronze → Silver → Gold)",
-      "Optimized Spark jobs through partitioning and performance tuning",
-      "Delivered analytics-ready datasets for business reporting",
-    ],
-  },
-  {
-    title: "End-to-End ETL Pipeline for Sales Analytics",
-    tag: "Airflow · SQL · Data Warehousing",
-    description:
-      "Designed an automated ETL pipeline to ingest raw sales data into relational databases.",
-    bullets: [
-      "Automated ingestion workflows using Apache Airflow DAGs",
-      "Built SQL-based data models for revenue trend analysis",
-      "Enabled KPI reporting for monthly sales performance",
-    ],
-  },
-  {
     title: "Customer Churn Analysis",
-    tag: "Machine Learning · Python · Tableau",
+    category: "Analytics Project",
     description:
-      "Performed telecom churn analysis to identify drivers of customer attrition.",
+      "Analyzed telecom customer behavior to identify churn drivers and support retention-focused decision making.",
     bullets: [
-      "Conducted EDA and feature engineering using Python",
-      "Improved retention insights reducing churn risk by 15%",
-      "Visualized insights using Tableau dashboards",
+      "Explored structured datasets using Python and SQL",
+      "Identified patterns contributing to customer attrition",
+      "Built dashboards to communicate churn trends and business insights",
+    ],
+  },
+  {
+    title: "Sales Performance Dashboard",
+    category: "BI Dashboard",
+    description:
+      "Created an interactive reporting dashboard to track revenue, customer behavior, and business KPIs.",
+    bullets: [
+      "Built KPI-focused visuals in Power BI/Tableau",
+      "Tracked sales growth, product performance, and customer trends",
+      "Turned raw business data into actionable reporting views",
+    ],
+  },
+  {
+    title: "Automated Data Pipeline",
+    category: "ETL Workflow",
+    description:
+      "Designed an analytics pipeline for ingesting, transforming, and preparing data for downstream reporting.",
+    bullets: [
+      "Used Python and SQL for transformation logic",
+      "Automated workflows with Apache Airflow",
+      "Prepared clean datasets for reporting and analysis",
     ],
   },
 ];
 
-const skills = [
-  { group: "Languages", items: ["Python (Pandas, NumPy, Scikit-learn)", "SQL", "PySpark", "C++", "Bash"] },
-  { group: "Data Engineering", items: ["ETL/ELT", "Apache Airflow", "Databricks (Medallion)", "Apache Spark", "Delta Lake", "Snowflake"] },
-  { group: "Cloud & Storage", items: ["AWS", "Azure", "MS SQL", "MySQL", "PostgreSQL", "Data Warehousing"] },
-  { group: "Analytics & Tools", items: ["Machine Learning", "EDA", "Feature Engineering", "Tableau", "Power BI", "Git", "Linux"] },
+const skillGroups = [
+  {
+    title: "Programming",
+    icon: Code2,
+    items: ["Python", "SQL", "PySpark", "Bash", "C++"],
+  },
+  {
+    title: "Analytics & BI",
+    icon: BarChart3,
+    items: ["Power BI", "Tableau", "Looker", "Excel", "Statistical Analysis"],
+  },
+  {
+    title: "Data Platforms",
+    icon: Briefcase,
+    items: ["Databricks", "Snowflake", "Redshift", "BigQuery", "MS SQL Server"],
+  },
+  {
+    title: "Workflow & Tools",
+    icon: User2,
+    items: ["Apache Airflow", "Git", "GitHub", "Linux", "AWS", "Google Cloud"],
+  },
 ];
 
-const bars = [
-  { name: "Python", level: 85 },
-  { name: "SQL", level: 80 },
-  { name: "Databricks", level: 70 },
-  { name: "Airflow", level: 65 },
-  { name: "Power BI", level: 75 },
+const highlights = [
+  "Python & SQL for analysis and reporting",
+  "Dashboard development in Power BI and Tableau",
+  "ETL, data cleaning, and transformation",
+  "Experience with cloud and modern data platforms",
 ];
 
-function cx(...c) {
-  return c.filter(Boolean).join(" ");
+function cx(...classes) {
+  return classes.filter(Boolean).join(" ");
 }
 
-function Chip({ children }) {
+function Pill({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs">
+    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/85">
       {children}
     </span>
   );
 }
 
-function Card({ className, children }) {
-  return (
-    <div
-      className={cx(
-        "rounded-3xl border border-orange-500/25 bg-zinc-950/60 p-6 shadow-lg",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-}
-
-function Button({ variant = "solid", className, ...props }) {
-  const base =
-    "inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-orange-500/60";
-  const solid =
-    "bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700";
-  const outline =
-    "border border-orange-500/30 bg-black/20 text-white hover:bg-orange-600/15";
-  return (
-    <button
-      className={cx(base, variant === "outline" ? outline : solid, className)}
-      {...props}
-    />
-  );
-}
-
-function Section({ id, title, kicker, children }) {
+function Section({ id, eyebrow, title, subtitle, children }) {
   return (
     <section id={id} className="scroll-mt-24">
-      <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-        <div className="mb-8">
-          {kicker ? (
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white">
-              <span className="h-2 w-2 rounded-full bg-orange-500" />
-              {kicker}
-            </div>
-          ) : null}
-          <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
-            {title}
-          </h2>
+      <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
+        <div className="mb-10 max-w-2xl">
+          {eyebrow ? <div className="mb-3 text-sm font-medium text-cyan-300">{eyebrow}</div> : null}
+          <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">{title}</h2>
+          {subtitle ? <p className="mt-3 text-sm leading-7 text-slate-300 md:text-base">{subtitle}</p> : null}
         </div>
         {children}
       </div>
@@ -124,45 +103,45 @@ function Section({ id, title, kicker, children }) {
   );
 }
 
-function Anchor({ href, children }) {
+function Card({ className, children }) {
+  return (
+    <div className={cx("rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur", className)}>
+      {children}
+    </div>
+  );
+}
+
+function LinkButton({ href, children, primary }) {
   return (
     <a
       href={href}
-      className="underline decoration-white/30 underline-offset-4 hover:decoration-white"
+      className={cx(
+        "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-medium transition",
+        primary
+          ? "bg-cyan-400 text-slate-950 hover:bg-cyan-300"
+          : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
+      )}
     >
       {children}
     </a>
   );
 }
 
-export default function Website() {
+export default function PortfolioRedesign() {
   const [active, setActive] = useState("home");
-  const [topic, setTopic] = useState("data-engineering");
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-  const heroLine = useMemo(() => {
-    const map = {
-      "data-engineering": {
-        headline: "Building Scalable Data Engineering Solutions.",
-        sub:
-          "Data Engineer experienced in ETL pipelines, Apache Airflow automation, and Medallion Architecture using Databricks & Delta Lake.",
-      },
-      portfolio: {
-        headline: "Show your work. Get hired.",
-        sub:
-          "A crisp portfolio layout with projects, skills, and a contact section that looks great on mobile.",
-      },
-      startup: {
-        headline: "Launch a landing page today.",
-        sub: "Hero + proof + CTA, with a clean black & orange theme.",
-      },
-    };
-    return map[topic] ?? map["data-engineering"];
-  }, [topic]);
+  const stats = useMemo(
+    () => [
+      { label: "Core Focus", value: "Data Analysis" },
+      { label: "Top Tools", value: "Python · SQL" },
+      { label: "Dashboards", value: "Power BI · Tableau" },
+    ],
+    []
+  );
 
-  React.useEffect(() => {
-    const ids = nav.map((n) => n.id);
-    const handler = () => {
+  useEffect(() => {
+    const ids = nav.map((item) => item.id);
+    const onScroll = () => {
       const y = window.scrollY;
       let current = "home";
       for (const id of ids) {
@@ -173,179 +152,178 @@ export default function Website() {
       }
       setActive(current);
     };
-    handler();
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    alert("Submitted! Hook this form to EmailJS/Formspree or your backend.");
-    setForm({ name: "", email: "", message: "" });
-  };
-
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Top Nav */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <a href="#home" className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-xl border border-orange-500/40 bg-orange-500/15 shadow-sm">
-              <div className="h-3 w-3 rounded-full bg-orange-500" />
+    <div className="min-h-screen bg-slate-950 text-white">
+      <div className="pointer-events-none fixed inset-0">
+        <div className="absolute left-0 top-0 h-80 w-80 rounded-full bg-cyan-500/15 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-fuchsia-500/10 blur-3xl" />
+      </div>
+
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/75 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+          <a href="#home" className="flex items-center gap-3">
+            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 text-sm font-bold text-slate-950">
+              GG
             </div>
-            <div className="leading-tight">
-              <div className="text-sm font-semibold">GOPICHAND GOTTIPATI</div>
-              <div className="text-xs text-white/90">Data Engineer Portfolio</div>
+            <div>
+              <div className="text-sm font-semibold tracking-wide">GOPICHAND GOTTIPATI</div>
+              <div className="text-xs text-slate-400">Data Analyst Portfolio</div>
             </div>
           </a>
 
           <nav className="hidden items-center gap-1 md:flex">
-            {nav.map((n) => (
+            {nav.map((item) => (
               <a
-                key={n.id}
-                href={`#${n.id}`}
+                key={item.id}
+                href={`#${item.id}`}
                 className={cx(
-                  "rounded-lg px-3 py-2 text-sm transition hover:bg-orange-600/15",
-                  active === n.id ? "bg-white/5" : ""
+                  "rounded-xl px-4 py-2 text-sm text-slate-300 transition hover:bg-white/8 hover:text-white",
+                  active === item.id && "bg-white/8 text-white"
                 )}
               >
-                {n.label}
+                {item.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-            <a href="#contact" className="hidden sm:block">
-              <Button variant="outline">Contact</Button>
-            </a>
-            <a href="#projects">
-              <Button>View Projects</Button>
-            </a>
-          </div>
+          <LinkButton href="#contact" primary>
+            Contact Me
+          </LinkButton>
         </div>
       </header>
 
-      {/* Hero */}
-      <section id="home">
-        <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-          <div className="grid gap-8 md:grid-cols-2 md:items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs">
-                <span className="h-2 w-2 rounded-full bg-orange-500" />
-               
-              </div>
+      <section id="home" className="relative overflow-hidden">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 md:grid-cols-[1.2fr_0.8fr] md:py-28">
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Pill>Open to Data Analyst Opportunities</Pill>
+            <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white md:text-6xl">
+              I build clear, business-ready insights from messy data.
+            </h1>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+              Data Analyst with hands-on experience in Python, SQL, dashboards, ETL workflows, and data quality improvement. I enjoy transforming raw datasets into reports, visuals, and insights that help teams make better decisions.
+            </p>
 
-              <h1 className="text-3xl font-semibold tracking-tight md:text-5xl">
-                {heroLine.headline}
-              </h1>
-              <p className="mt-4 max-w-prose text-base text-white/90 md:text-lg">
-                {heroLine.sub}
+            <div className="mt-8 flex flex-wrap gap-3">
+              <LinkButton href="#projects" primary>
+                View Projects
+              </LinkButton>
+              <LinkButton href="#skills">Explore Skills</LinkButton>
+            </div>
+
+            <div className="mt-10 grid gap-3 sm:grid-cols-3">
+              {stats.map((item) => (
+                <Card key={item.label} className="rounded-2xl p-4">
+                  <div className="text-xs uppercase tracking-[0.2em] text-slate-400">{item.label}</div>
+                  <div className="mt-2 text-sm font-medium text-white">{item.value}</div>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.08 }}>
+            <Card className="relative overflow-hidden rounded-[28px] border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-7">
+              <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-400/20 blur-2xl" />
+              <div className="text-sm font-medium text-cyan-300">Profile Snapshot</div>
+              <div className="mt-4 text-2xl font-semibold">Data Analyst</div>
+              <p className="mt-3 text-sm leading-7 text-slate-300">
+                Strong foundation in reporting, dashboarding, SQL querying, data transformation, and business insight generation across analytics-focused projects.
               </p>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <a href="#contact">
-                  <Button>Let’s talk</Button>
-                </a>
-                <a href="#skills">
-                  <Button variant="outline">See Skills</Button>
-                </a>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {highlights.map((item) => (
+                  <Pill key={item}>{item}</Pill>
+                ))}
               </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-            >
-              <Card>
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-semibold">Skills Snapshot</div>
-                    
-                  </div>
-                  <Chip>2026</Chip>
-                </div>
-
-                <div className="space-y-3">
-                  {bars.map((b) => (
-                    <div key={b.name} className="space-y-1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-white/90">{b.name}</span>
-                        <span className="text-white/70">{b.level}%</span>
-                      </div>
-                      <div className="h-2 w-full rounded-full bg-white/10">
-                        <div
-                          className="h-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-700"
-                          style={{ width: `${b.level}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-             
-            </motion.div>
-          </div>
+              <div className="mt-8 rounded-2xl border border-white/10 bg-slate-950/50 p-5">
+                <div className="text-sm font-medium text-white">What I bring</div>
+                <ul className="mt-4 space-y-3 text-sm text-slate-300">
+                  <li>• Data cleaning, transformation, and validation</li>
+                  <li>• Business reporting with strong data storytelling</li>
+                  <li>• Practical experience with modern data tools</li>
+                  <li>• A balance of technical skills and communication</li>
+                </ul>
+              </div>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
-      {/* About */}
-      <Section id="about" title="About" kicker="A short story section">
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card className="md:col-span-2">
-            <div className="text-lg font-semibold">About Me</div>
-            
-            <div className="mt-4 space-y-3 text-sm text-white/90">
+      <Section
+        id="about"
+        eyebrow="About Me"
+        title="About Me"
+        subtitle=""
+      >
+        <div className="grid gap-6 md:grid-cols-[1.3fr_0.7fr]">
+          <Card>
+            <div className="text-xl font-semibold">Who I am</div>
+            <div className="mt-5 space-y-4 text-sm leading-7 text-slate-300 md:text-base">
               <p>
-                Data Engineer specializing in building scalable ETL pipelines and automated data workflows using Apache Airflow, Databricks, and Delta Lake. Experienced in Medallion Architecture, cloud platforms (AWS & Azure), and transforming raw data into analytics-ready solutions. Passionate about designing reliable data systems that drive data-driven decision making.
+                I am a Data Analyst with experience working on structured and semi-structured datasets using Python and SQL. My work includes data cleaning, transformation, validation, exploratory analysis, and building dashboards that support decision-making.
+              </p>
+              <p>
+                I also have exposure to ETL workflows, cloud data platforms, and tools such as Databricks, Snowflake, Redshift, BigQuery, AWS, and Google Cloud. I enjoy making data more reliable, understandable, and useful for real business needs.
               </p>
             </div>
           </Card>
 
           <Card>
-            <div className="text-lg font-semibold">Quick links</div>
-            
-            <div className="mt-4 space-y-2 text-sm">
-              <div>
-                GitHub: <Anchor href="https://github.com/chandugottipati915-boop">github.com/gopichand</Anchor>
+            <div className="text-xl font-semibold">Quick Info</div>
+            <div className="mt-5 space-y-4 text-sm text-slate-300">
+              <div className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 text-cyan-300" />
+                <span>New Jersey, USA</span>
               </div>
-              <div>
-                LinkedIn: <Anchor href="https://www.linkedin.com/in/gopichand-gottipati-987a02229/">linkedin.com/in/gopichand</Anchor>
+              <div className="flex items-start gap-3">
+                <Mail className="mt-0.5 h-4 w-4 text-cyan-300" />
+                <a href="mailto:chandugottipati915@gmail.com" className="hover:text-white">
+                  chandugottipati915@gmail.com
+                </a>
               </div>
-              <div>
-                Email: <Anchor href="mailto:chandugottipati915@gmail.com">chandugottipati915@gmail.com</Anchor>
+              <div className="flex items-start gap-3">
+                <Phone className="mt-0.5 h-4 w-4 text-cyan-300" />
+                <a href="tel:+19085308636" className="hover:text-white">
+                  +1 9085308636
+                </a>
               </div>
-             
+              <div className="flex items-start gap-3">
+                <ExternalLink className="mt-0.5 h-4 w-4 text-cyan-300" />
+                <a href="https://github.com/chandugottipati915-boop" className="hover:text-white">github.com/chandugottipati915-boop</a>
+              </div>
             </div>
           </Card>
         </div>
       </Section>
 
-      {/* Projects */}
-      <Section id="projects" title="Projects" kicker="Selected work">
-        <div className="grid gap-5 md:grid-cols-3">
-          {projects.map((p) => (
+      <Section
+        id="projects"
+        eyebrow="Featured Work"
+        title="Projects that show applied data skills"
+      >
+        <div className="grid gap-6 md:grid-cols-3">
+          {projects.map((project, index) => (
             <motion.div
-              key={p.title}
-              initial={{ opacity: 0, y: 8 }}
+              key={project.title}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.45, delay: index * 0.06 }}
             >
-              <Card className="h-full hover:border-orange-500/40 hover:bg-zinc-950/80">
-                <div className="text-lg font-semibold">{p.title}</div>
-                <div className="mt-1 text-xs text-white/80">{p.tag}</div>
-                <p className="mt-3 text-sm text-white/90">{p.description}</p>
-                <ul className="mt-4 space-y-2 text-sm text-white/90">
-                  {p.bullets.map((b) => (
-                    <li key={b} className="flex gap-2">
-                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
-                      <span>{b}</span>
+              <Card className="h-full rounded-[28px] p-6 transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/[0.07]">
+                <div className="text-xs font-medium uppercase tracking-[0.2em] text-cyan-300">{project.category}</div>
+                <h3 className="mt-3 text-xl font-semibold text-white">{project.title}</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-300">{project.description}</p>
+                <ul className="mt-5 space-y-3 text-sm text-slate-300">
+                  {project.bullets.map((bullet) => (
+                    <li key={bullet} className="flex gap-3">
+                      <span className="mt-2 h-2 w-2 rounded-full bg-cyan-300" />
+                      <span>{bullet}</span>
                     </li>
                   ))}
                 </ul>
@@ -355,68 +333,73 @@ export default function Website() {
         </div>
       </Section>
 
-      {/* Skills */}
-      <Section id="skills" title="Skills" kicker="What I use">
-        <div className="grid gap-5 md:grid-cols-2">
-          <Card>
-            <div className="text-lg font-semibold">Skill groups</div>
-            <div className="mt-1 text-sm text-white/85">
-              Keep it readable and ATS-friendly.
-            </div>
-
-            <div className="mt-4 space-y-4">
-              {skills.map((s) => (
-                <div key={s.group} className="space-y-2">
-                  <div className="text-sm font-medium text-white/95">{s.group}</div>
-                  <div className="flex flex-wrap gap-2">
-                    {s.items.map((it) => (
-                      <Chip key={it}>{it}</Chip>
-                    ))}
+      <Section
+        id="skills"
+        eyebrow="Skills"
+        title="Organized by capability, not just a long list"
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          {skillGroups.map((group) => {
+            const Icon = group.icon;
+            return (
+              <Card key={group.title} className="rounded-[28px]">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-white">{group.title}</div>
+                    <div className="text-sm text-slate-400">Core tools and technologies</div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Card>
 
-          
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <Pill key={item}>{item}</Pill>
+                  ))}
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </Section>
 
-      {/* Contact */}
-      <Section id="contact" title="Contact" kicker="Let’s connect">
-        <div className="grid gap-6 md:grid-cols-2">
-          
-
-          <Card>
-            <div className="text-lg font-semibold">Direct</div>
-            
-
-            <div className="mt-4 space-y-3 text-sm text-white/90">
-              <div>
-                Email: <Anchor href="mailto:chandugottipati915@gmail.com">chandugottipati915@gmail.com</Anchor>
-              </div>
-              <div>
-                LinkedIn: <Anchor href="https://www.linkedin.com/in/gopichand-gottipati-987a02229/">linkedin.com/in/gopichand</Anchor>
-              </div>
-              <div>
-                GitHub: <Anchor href="https://github.com/chandugottipati915-boop">github.com/gopichand</Anchor>
-              </div>
-
+      <Section
+        id="contact"
+        eyebrow="Contact"
+        title="Let’s connect"
+        subtitle="A simple closing section with cleaner spacing and stronger call-to-action."
+      >
+        <Card className="rounded-[32px] bg-gradient-to-r from-cyan-400/10 via-blue-500/10 to-fuchsia-500/10 p-8 md:p-10">
+          <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
+            <div>
+              <h3 className="text-2xl font-semibold text-white md:text-3xl">Interested in data analyst opportunities?</h3>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
+                I’m actively looking for opportunities where I can contribute through data analysis, dashboard development, reporting, and data-driven problem solving.
+              </p>
             </div>
-          </Card>
-        </div>
-      </Section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-black/90">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 md:flex-row md:items-center md:justify-between">
-          <div className="text-sm text-white/85">
-            © {new Date().getFullYear()} GOPICHAND GOTTIPATI — Built with React
+            <div className="space-y-4 text-sm text-slate-200">
+              <a href="mailto:chandugottipati915@gmail.com" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 hover:bg-slate-900">
+                <Mail className="h-4 w-4 text-cyan-300" />
+                chandugottipati915@gmail.com
+              </a>
+              <a href="tel:+19085308636" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 hover:bg-slate-900">
+                <Phone className="h-4 w-4 text-cyan-300" />
+                +1 9085308636
+              </a>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-sm">
-            {nav.map((n) => (
-              <a key={n.id} href={`#${n.id}`} className="text-white/85 hover:text-white">
-                {n.label}
+        </Card>
+      </Section>
+
+      <footer className="border-t border-white/10 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+          <div>© {new Date().getFullYear()} Gopichand Gottipati</div>
+          <div className="flex flex-wrap gap-4">
+            {nav.map((item) => (
+              <a key={item.id} href={`#${item.id}`} className="hover:text-white">
+                {item.label}
               </a>
             ))}
           </div>
