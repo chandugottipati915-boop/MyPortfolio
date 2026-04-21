@@ -1,411 +1,422 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, ExternalLink, Briefcase, Code2, BarChart3, User2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import Chatbot from "./components/Chatbot";
 
-const nav = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "About" },
-  { id: "projects", label: "Projects" },
-  { id: "skills", label: "Skills" },
-  { id: "contact", label: "Contact" },
+const NAV_ITEMS = ["hero", "about", "experience", "projects", "contact"];
+
+const NAV_LABELS = {
+  hero: "Home",
+  about: "About",
+  experience: "Experience",
+  projects: "Projects",
+  contact: "Contact",
+};
+
+const SKILLS = [
+  "Python", "SQL", "Pandas", "Scikit-learn", "Power BI", "Tableau",
+  "Matplotlib", "Seaborn", "AWS S3", "Databricks", "Snowflake",
+  "BigQuery", "Apache Airflow", "Git", "Excel",
 ];
 
-const projects = [
-  {
-    title: "Customer Churn Analysis",
-    category: "Analytics Project",
-    description:
-      "Analyzed telecom customer behavior to identify churn drivers and support retention-focused decision making.",
-    bullets: [
-      "Explored structured datasets using Python and SQL",
-      "Identified patterns contributing to customer attrition",
-      "Built dashboards to communicate churn trends and business insights",
-    ],
-  },
-  {
-    title: "Sales Performance Dashboard",
-    category: "BI Dashboard",
-    description:
-      "Created an interactive reporting dashboard to track revenue, customer behavior, and business KPIs.",
-    bullets: [
-      "Built KPI-focused visuals in Power BI/Tableau",
-      "Tracked sales growth, product performance, and customer trends",
-      "Turned raw business data into actionable reporting views",
-    ],
-  },
-  {
-    title: "Automated Data Pipeline",
-    category: "ETL Workflow",
-    description:
-      "Designed an analytics pipeline for ingesting, transforming, and preparing data for downstream reporting.",
-    bullets: [
-      "Used Python and SQL for transformation logic",
-      "Automated workflows with Apache Airflow",
-      "Prepared clean datasets for reporting and analysis",
-    ],
-  },
+const STATS = [
+  { number: "3+", label: "Years of experience" },
+  { number: "15+", label: "Projects delivered" },
+  { number: "5+", label: "BI tools mastered" },
 ];
 
-const skillGroups = [
+const EXPERIENCE = [
   {
-    title: "Programming",
-    icon: Code2,
-    items: ["Python", "SQL", "PySpark", "Bash", "C++"],
+    role: "Data Analyst Intern",
+    org: "Community Dreams Foundation · Remote",
+    period: "Aug 2025 – Present",
+    desc: "Analyze structured and semi-structured datasets using Python and SQL to identify business trends and performance insights. Developed and implemented data quality rules and validation frameworks, improving data accuracy by 40% and information management processes by 30%.",
+    tags: ["Python", "SQL", "Data Quality", "Data Validation"],
   },
   {
-    title: "Analytics & BI",
-    icon: BarChart3,
-    items: ["Power BI", "Tableau", "Looker", "Excel", "Statistical Analysis"],
+    role: "M.S. in Computer Science",
+    org: "Sacred Heart University · Fairfield, CT",
+    period: "Jan 2024 – Aug 2025",
+    desc: "Master's in Computer Science with a cumulative GPA of 3.93/4.0. Also served as a Machine Learning Research Intern (Apr–Aug 2024), building regression models to predict residential housing prices using Python (Pandas, Scikit-learn), improving prediction accuracy by 20% while maintaining 95%+ data integrity.",
+    tags: ["Machine Learning", "Python", "Scikit-learn", "Pandas", "GPA: 3.93"],
   },
   {
-    title: "Data Platforms",
-    icon: Briefcase,
-    items: ["Databricks", "Snowflake", "Redshift", "BigQuery", "MS SQL Server"],
+    role: "Analytics Engineer",
+    org: "Hex N Bit · India",
+    period: "Jan 2022 – Dec 2023",
+    desc: "Cleaned and merged e-commerce datasets from 4 disparate sources using Python, SQL, and AWS S3, reducing data errors by 30%. Built an interactive Power BI dashboard tracking real-time KPIs — replacing 10+ static Excel reports. Delivered monthly insights to client leadership, influencing Q3 marketing strategy that improved conversion rates by 18%.",
+    tags: ["Python", "SQL", "AWS S3", "Power BI", "Matplotlib", "Seaborn"],
   },
   {
-    title: "Workflow & Tools",
-    icon: User2,
-    items: ["Apache Airflow", "Git", "GitHub", "Linux", "AWS", "Google Cloud"],
+    role: "B.S. in Computer Science",
+    org: "SRM University · Amaravathi, India",
+    period: "Jun 2019 – Aug 2023",
+    desc: "Bachelor's in Computer Science with a cumulative GPA of 3.4/4.0. Built a strong foundation in data structures, algorithms, databases, and software engineering principles.",
+    tags: ["Academic", "Computer Science", "GPA: 3.4"],
   },
 ];
 
-const highlights = [
-  "Python & SQL for analysis and reporting",
-  "Dashboard development in Power BI and Tableau",
-  "ETL, data cleaning, and transformation",
-  "Experience with cloud and modern data platforms",
+const PROJECTS = [
+  {
+    tag: "Machine Learning · Python · Scikit-learn",
+    name: "Residential Housing Price Prediction",
+    desc: "Built and optimized regression models to predict residential housing prices using Python (Pandas, Scikit-learn), improving prediction accuracy by 20%. Engineered features, conducted statistical analysis, and maintained 95%+ data integrity across training datasets.",
+    github: "https://github.com/chandugottipati915-boop",
+    thumbBg: "linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%)",
+    thumbAccent: "#0d9488",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    ),
+  },
+  {
+    tag: "Analytics · Power BI · Python",
+    name: "E-Commerce KPI Dashboard",
+    desc: "Cleaned and merged datasets from 4 disparate sources using Python and AWS S3, reducing data errors by 30%. Built an interactive Power BI dashboard tracking real-time KPIs — sales, revenue, and retention — replacing 10+ static Excel reports and influencing Q3 marketing strategy to improve conversion rates by 18%.",
+    github: "https://github.com/chandugottipati915-boop",
+    thumbBg: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+    thumbAccent: "#d97706",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+      </svg>
+    ),
+  },
+  {
+    tag: "Data Quality · Python · SQL",
+    name: "Data Quality Validation Framework",
+    desc: "Designed and implemented data quality rules and validation frameworks to assess structured and semi-structured datasets. Improved data accuracy by 40% and streamlined information management processes by 30%, enabling reliable downstream analysis.",
+    github: "https://github.com/chandugottipati915-boop",
+    thumbBg: "linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%)",
+    thumbAccent: "#7c3aed",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    ),
+  },
 ];
 
-function cx(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+const GithubIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+  </svg>
+);
 
-function Pill({ children }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-violet-400/20 bg-violet-500/10 px-3 py-1 text-xs text-violet-200">
-      {children}
-    </span>
-  );
-}
+export default function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
+  const [scrolled, setScrolled] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
-function Section({ id, eyebrow, title, subtitle, children }) {
-  return (
-    <section id={id} className="scroll-mt-24">
-      <div className="mx-auto max-w-6xl px-4 py-16 md:py-20">
-        <div className="mb-10 max-w-2xl">
-          {eyebrow ? <div className="mb-3 text-sm font-medium text-violet-400">{eyebrow}</div> : null}
-          <h2 className="text-3xl font-semibold tracking-tight text-white md:text-4xl">{title}</h2>
-          {subtitle ? <p className="mt-3 text-sm leading-7 text-slate-300 md:text-base">{subtitle}</p> : null}
-        </div>
-        {children}
-      </div>
-    </section>
-  );
-}
-
-function Card({ className, children }) {
-  return (
-    <div className={cx("rounded-3xl border border-violet-400/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30 backdrop-blur ring-1 ring-inset ring-white/5", className)}>
-      {children}
-    </div>
-  );
-}
-
-function LinkButton({ href, children, primary }) {
-  return (
-    <a
-      href={href}
-      className={cx(
-        "inline-flex items-center justify-center rounded-2xl px-5 py-3 text-sm font-medium transition",
-        primary
-          ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25 hover:from-violet-400 hover:to-purple-500"
-          : "border border-white/15 bg-white/5 text-white hover:bg-white/10 hover:border-violet-400/30"
-      )}
-    >
-      {children}
-    </a>
-  );
-}
-
-export default function PortfolioRedesign() {
-  const [active, setActive] = useState("home");
-
-  const stats = useMemo(
-    () => [
-      { label: "Core Focus", value: "Data Analysis" },
-      { label: "Top Tools", value: "Python · SQL" },
-      { label: "Dashboards", value: "Power BI · Tableau" },
-    ],
-    []
-  );
-
+  // Nav scroll shadow
   useEffect(() => {
-    const ids = nav.map((item) => item.id);
-    const onScroll = () => {
-      const y = window.scrollY;
-      let current = "home";
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        if (y + 140 >= top) current = id;
-      }
-      setActive(current);
-    };
-    onScroll();
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return (
-    <div className="min-h-screen bg-[#08071a] text-white">
-      <div className="pointer-events-none fixed inset-0">
-        <div className="absolute left-0 top-0 h-96 w-96 rounded-full bg-violet-600/20 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl" />
-        <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-700/10 blur-3xl" />
-      </div>
+  // Active section tracking
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { threshold: 0.35 }
+    );
+    NAV_ITEMS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
-      <header className="sticky top-0 z-50 border-b border-violet-400/10 bg-[#08071a]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <a href="#home" className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-purple-700 text-sm font-bold text-white shadow-lg shadow-violet-500/30">
-              GG
-            </div>
-            <div>
-              <div className="text-sm font-semibold tracking-wide">GOPICHAND GOTTIPATI</div>
-              <div className="text-xs text-slate-400">Data Analyst Portfolio</div>
-            </div>
+  // Scroll reveal
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const closeMenu = () => setMenuOpen(false);
+
+  const handleSubmit = () => {
+    const { name, email, message } = formData;
+    if (!name || !email || !message) { alert("Please fill in all fields."); return; }
+    const subject = encodeURIComponent(`Portfolio inquiry from ${name}`);
+    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+    window.location.href = `mailto:chandugottipati915@gmail.com?subject=${subject}&body=${body}`;
+    setFormSuccess(true);
+    setFormData({ name: "", email: "", message: "" });
+  };
+
+  return (
+    <>
+      {/* ── Nav ── */}
+      <nav id="nav" className={scrolled ? "scrolled" : ""}>
+        <div className="container nav-inner">
+          <a href="#hero" className="nav-logo">
+            <div className="nav-logo-mark">GG</div>
+            <span>Gopichand Gottipati</span>
           </a>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {nav.map((item) => (
+          <div className="nav-links">
+            {NAV_ITEMS.map((id) => (
               <a
-                key={item.id}
-                href={`#${item.id}`}
-                className={cx(
-                  "rounded-xl px-4 py-2 text-sm text-slate-300 transition hover:bg-violet-500/10 hover:text-white",
-                  active === item.id && "bg-violet-500/15 text-white"
-                )}
+                key={id}
+                href={`#${id}`}
+                className={activeSection === id ? "active" : ""}
               >
-                {item.label}
+                {NAV_LABELS[id]}
               </a>
             ))}
-          </nav>
+            <a href="#contact" className="nav-cta">Hire me</a>
+          </div>
 
-          <LinkButton href="#contact" primary>
-            Contact Me
-          </LinkButton>
+          <button
+            className={`hamburger${menuOpen ? " open" : ""}`}
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
+          </button>
         </div>
-      </header>
+      </nav>
 
-      <section id="home" className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-20 md:grid-cols-[1.2fr_0.8fr] md:py-28">
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <Pill>Open to Data Analyst Opportunities</Pill>
-            <h1 className="mt-6 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-white md:text-6xl">
-              I build clear, business-ready insights from messy data.
-            </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
-              Data Analyst with hands-on experience in Python, SQL, dashboards, ETL workflows, and data quality improvement. I enjoy transforming raw datasets into reports, visuals, and insights that help teams make better decisions.
-            </p>
+      {/* Mobile drawer */}
+      <div className={`nav-drawer${menuOpen ? " open" : ""}`}>
+        {NAV_ITEMS.map((id) => (
+          <a key={id} href={`#${id}`} onClick={closeMenu}>
+            {NAV_LABELS[id]}
+          </a>
+        ))}
+        <a href="#contact" onClick={closeMenu} style={{ color: "var(--accent)", fontWeight: 600 }}>Hire me →</a>
+      </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <LinkButton href="#projects" primary>
-                View Projects
-              </LinkButton>
-              <LinkButton href="#skills">Explore Skills</LinkButton>
-            </div>
-
-            <div className="mt-10 grid gap-3 sm:grid-cols-3">
-              {stats.map((item) => (
-                <Card key={item.label} className="rounded-2xl p-4">
-                  <div className="text-xs uppercase tracking-[0.2em] text-slate-400">{item.label}</div>
-                  <div className="mt-2 text-sm font-medium text-white">{item.value}</div>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.08 }}>
-            <Card className="relative overflow-hidden rounded-[28px] border-violet-400/15 bg-gradient-to-br from-violet-500/10 to-purple-900/10 p-7">
-              <div className="absolute right-0 top-0 h-24 w-24 rounded-full bg-violet-500/25 blur-2xl" />
-              <div className="text-sm font-medium text-violet-400">Profile Snapshot</div>
-              <div className="mt-4 text-2xl font-semibold">Data Analyst</div>
-              <p className="mt-3 text-sm leading-7 text-slate-300">
-                Strong foundation in reporting, dashboarding, SQL querying, data transformation, and business insight generation across analytics-focused projects.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-2">
-                {highlights.map((item) => (
-                  <Pill key={item}>{item}</Pill>
-                ))}
-              </div>
-
-              <div className="mt-8 rounded-2xl border border-white/10 bg-slate-950/50 p-5">
-                <div className="text-sm font-medium text-white">What I bring</div>
-                <ul className="mt-4 space-y-3 text-sm text-slate-300">
-                  <li>• Data cleaning, transformation, and validation</li>
-                  <li>• Business reporting with strong data storytelling</li>
-                  <li>• Practical experience with modern data tools</li>
-                  <li>• A balance of technical skills and communication</li>
-                </ul>
-              </div>
-            </Card>
-          </motion.div>
+      {/* ── Hero ── */}
+      <section id="hero">
+        <div className="container hero-inner">
+          <div className="hero-badge reveal">Open to new opportunities</div>
+          <h1 className="hero-title reveal reveal-delay-1">
+            Hi, I'm <em>Gopichand</em> —<br />I make data work for you.
+          </h1>
+          <p className="hero-sub reveal reveal-delay-2">
+            Data Analyst specializing in Python, SQL, and BI tools. I help teams move from scattered spreadsheets to confident, data-driven decisions.
+          </p>
+          <div className="hero-actions reveal reveal-delay-3">
+            <a href="#projects" className="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12l10 8 10-8"/><path d="M2 7l10 8 10-8"/>
+              </svg>
+              See my work
+            </a>
+            <a href="#contact" className="btn btn-outline">Let's connect</a>
+            <a href="/resume.pdf" download className="btn btn-outline">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Resume
+            </a>
+          </div>
+          <div className="hero-scroll reveal">
+            <div className="scroll-line" />
+            <span>Scroll</span>
+          </div>
         </div>
       </section>
 
-      <Section
-        id="about"
-        eyebrow="About Me"
-        title="About Me"
-        subtitle=""
-      >
-        <div className="grid gap-6 md:grid-cols-[1.3fr_0.7fr]">
-          <Card>
-            <div className="text-xl font-semibold">Who I am</div>
-            <div className="mt-5 space-y-4 text-sm leading-7 text-slate-300 md:text-base">
-              <p>
-                I am a Data Analyst with experience working on structured and semi-structured datasets using Python and SQL. My work includes data cleaning, transformation, validation, exploratory analysis, and building dashboards that support decision-making.
-              </p>
-              <p>
-                I also have exposure to ETL workflows, cloud data platforms, and tools such as Databricks, Snowflake, Redshift, BigQuery, AWS, and Google Cloud. I enjoy making data more reliable, understandable, and useful for real business needs.
-              </p>
-            </div>
-          </Card>
-
-          <Card>
-            <div className="text-xl font-semibold">Quick Info</div>
-            <div className="mt-5 space-y-4 text-sm text-slate-300">
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 text-violet-400" />
-                <span>New Jersey, USA</span>
-              </div>
-              <div className="flex items-start gap-3">
-                <Mail className="mt-0.5 h-4 w-4 text-violet-400" />
-                <a href="mailto:chandugottipati915@gmail.com" className="hover:text-white">
-                  chandugottipati915@gmail.com
-                </a>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone className="mt-0.5 h-4 w-4 text-violet-400" />
-                <a href="tel:+19085308636" className="hover:text-white">
-                  +1 9085308636
-                </a>
-              </div>
-              <div className="flex items-start gap-3">
-                <ExternalLink className="mt-0.5 h-4 w-4 text-violet-400" />
-                <a href="https://github.com/chandugottipati915-boop" className="hover:text-white">github.com/chandugottipati915-boop</a>
+      {/* ── About ── */}
+      <section id="about">
+        <div className="container">
+          <p className="section-eyebrow reveal">About me</p>
+          <h2 className="section-title reveal">Turning raw data into decisions that stick</h2>
+          <div className="about-grid">
+            <div className="about-photo reveal">
+              <div className="about-photo-inner">
+                <div className="about-photo-icon">GG</div>
+                <p>Profile Photo</p>
+                <small>Replace with your image</small>
               </div>
             </div>
-          </Card>
-        </div>
-      </Section>
-
-      <Section
-        id="projects"
-        eyebrow="Featured Work"
-        title="Projects that show applied data skills"
-      >
-        <div className="grid gap-6 md:grid-cols-3">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.45, delay: index * 0.06 }}
-            >
-              <Card className="h-full rounded-[28px] p-6 transition hover:-translate-y-1 hover:border-violet-400/30 hover:bg-violet-500/[0.06]">
-                <div className="text-xs font-medium uppercase tracking-[0.2em] text-violet-400">{project.category}</div>
-                <h3 className="mt-3 text-xl font-semibold text-white">{project.title}</h3>
-                <p className="mt-4 text-sm leading-7 text-slate-300">{project.description}</p>
-                <ul className="mt-5 space-y-3 text-sm text-slate-300">
-                  {project.bullets.map((bullet) => (
-                    <li key={bullet} className="flex gap-3">
-                      <span className="mt-2 h-2 w-2 rounded-full bg-violet-400" />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-      </Section>
-
-      <Section
-        id="skills"
-        eyebrow="Skills"
-        title="Organized by capability, not just a long list"
-      >
-        <div className="grid gap-6 md:grid-cols-2">
-          {skillGroups.map((group) => {
-            const Icon = group.icon;
-            return (
-              <Card key={group.title} className="rounded-[28px]">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-11 w-11 place-items-center rounded-2xl bg-violet-500/10 text-violet-400">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">{group.title}</div>
-                    <div className="text-sm text-slate-400">Core tools and technologies</div>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <Pill key={item}>{item}</Pill>
-                  ))}
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      </Section>
-
-      <Section
-        id="contact"
-        eyebrow="Contact"
-        title="Let’s connect"
-        subtitle="A simple closing section with cleaner spacing and stronger call-to-action."
-      >
-        <Card className="rounded-[32px] bg-gradient-to-r from-violet-500/10 via-purple-600/10 to-amber-500/10 p-8 md:p-10">
-          <div className="grid gap-8 md:grid-cols-[1.2fr_0.8fr] md:items-center">
             <div>
-              <h3 className="text-2xl font-semibold text-white md:text-3xl">Interested in data analyst opportunities?</h3>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300 md:text-base">
-                I’m actively looking for opportunities where I can contribute through data analysis, dashboard development, reporting, and data-driven problem solving.
-              </p>
-            </div>
-
-            <div className="space-y-4 text-sm text-slate-200">
-              <a href="mailto:chandugottipati915@gmail.com" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 hover:bg-slate-900">
-                <Mail className="h-4 w-4 text-violet-400" />
-                chandugottipati915@gmail.com
-              </a>
-              <a href="tel:+19085308636" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-4 hover:bg-slate-900">
-                <Phone className="h-4 w-4 text-violet-400" />
-                +1 9085308636
-              </a>
+              <div className="about-stats reveal">
+                {STATS.map((s) => (
+                  <div key={s.label} className="stat-item">
+                    <span className="stat-number">{s.number}</span>
+                    <span className="stat-label">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="about-bio reveal">
+                <p>I'm a Data Analyst with a Master's in Computer Science from Sacred Heart University (GPA 3.93). I have hands-on experience across the full analytics lifecycle — from ingesting messy raw data all the way to polished dashboards that <strong>non-technical stakeholders actually use</strong>. My work spans Python, SQL, Power BI, Scikit-learn, and cloud platforms like AWS, Databricks, and Snowflake.</p>
+                <p>What drives me is making data <strong>genuinely useful</strong> — not just technically correct. I focus on clear communication and storytelling so that decision-makers understand not just what happened, but what to do about it.</p>
+              </div>
+              <div className="reveal reveal-delay-1">
+                <p className="skills-label">Core skills</p>
+                <div className="skills-grid">
+                  {SKILLS.map((s) => <span key={s} className="skill-tag">{s}</span>)}
+                </div>
+              </div>
             </div>
           </div>
-        </Card>
-      </Section>
+        </div>
+      </section>
 
-      <footer className="border-t border-white/10 py-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
-          <div>© {new Date().getFullYear()} Gopichand Gottipati</div>
-          <div className="flex flex-wrap gap-4">
-            {nav.map((item) => (
-              <a key={item.id} href={`#${item.id}`} className="hover:text-white">
-                {item.label}
-              </a>
+      {/* ── Experience ── */}
+      <section id="experience">
+        <div className="container">
+          <p className="section-eyebrow reveal">Experience</p>
+          <h2 className="section-title reveal">Where I've worked &amp; learned</h2>
+          <p className="section-sub reveal">A timeline of roles and education that shaped how I think about data.</p>
+          <div className="exp-timeline">
+            {EXPERIENCE.map((exp, i) => (
+              <div key={exp.role} className={`exp-item reveal reveal-delay-${i}`}>
+                <div className="exp-meta">
+                  <p className="exp-period">{exp.period}</p>
+                  <p className="exp-org">{exp.org}</p>
+                </div>
+                <div className="exp-body">
+                  <h3 className="exp-role">{exp.role}</h3>
+                  <p className="exp-desc">{exp.desc}</p>
+                  <div className="exp-tags">
+                    {exp.tags.map((t) => <span key={t} className="exp-tag">{t}</span>)}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── Projects ── */}
+      <section id="projects">
+        <div className="container">
+          <p className="section-eyebrow reveal">Featured work</p>
+          <h2 className="section-title reveal">Projects built with real data</h2>
+          <p className="section-sub reveal">A selection of analytics, BI, and data engineering projects — each built to answer a real business question.</p>
+          <div className="projects-grid">
+            {PROJECTS.map((p, i) => (
+              <article key={p.name} className={`project-card reveal reveal-delay-${i}`}>
+                <div className="project-thumb" style={{ background: p.thumbBg }}>
+                  <div className="thumb-icon" style={{ background: p.thumbAccent, boxShadow: `0 6px 20px ${p.thumbAccent}55` }}>{p.icon}</div>
+                </div>
+                <div className="project-body">
+                  <p className="project-tag">{p.tag}</p>
+                  <h3 className="project-name">{p.name}</h3>
+                  <p className="project-desc">{p.desc}</p>
+                  <div className="project-actions">
+                    <a href={p.github} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
+                      <GithubIcon /> GitHub
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Contact ── */}
+      <section id="contact">
+        <div className="container">
+          <p className="section-eyebrow reveal">Contact</p>
+          <h2 className="section-title reveal">Let's work together</h2>
+          <div className="contact-wrapper">
+            {/* Form */}
+            <div className="contact-form reveal">
+              {formSuccess && (
+                <div className="form-success">
+                  Thanks for reaching out! I'll get back to you soon.
+                </div>
+              )}
+              {!formSuccess && (
+                <>
+                  <div className="form-row">
+                    <div className="field">
+                      <label htmlFor="name">Name</label>
+                      <input id="name" type="text" placeholder="Your name" value={formData.name} onChange={e => setFormData(f => ({ ...f, name: e.target.value }))} />
+                    </div>
+                    <div className="field">
+                      <label htmlFor="email">Email</label>
+                      <input id="email" type="email" placeholder="you@example.com" value={formData.email} onChange={e => setFormData(f => ({ ...f, email: e.target.value }))} />
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label htmlFor="message">Message</label>
+                    <textarea id="message" placeholder="Tell me about the role or project…" value={formData.message} onChange={e => setFormData(f => ({ ...f, message: e.target.value }))} />
+                  </div>
+                  <button className="btn btn-primary" onClick={handleSubmit}>
+                    Send message
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Links */}
+            <div className="contact-info reveal reveal-delay-1">
+              <p className="contact-intro">
+                I'm actively looking for data analyst and analytics engineer roles where clean data meets clear communication. If you're building a data team or have an opportunity in mind, I'd love to hear from you.
+              </p>
+              <div className="contact-links">
+                <a href="https://github.com/chandugottipati915-boop" className="contact-link">
+                  <div className="contact-link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                  </div>
+                  <div className="contact-link-text">GitHub <small>chandugottipati915-boop</small></div>
+                </a>
+                <a href="https://www.linkedin.com/in/gopichand08/" target="_blank" rel="noreferrer" className="contact-link">
+                  <div className="contact-link-icon">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                  </div>
+                  <div className="contact-link-text">LinkedIn <small>gopichand-gottipati</small></div>
+                </a>
+                <a href="mailto:chandugottipati915@gmail.com" className="contact-link">
+                  <div className="contact-link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                      <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                  </div>
+                  <div className="contact-link-text">Email <small>chandugottipati915@gmail.com</small></div>
+                </a>
+                <a href="tel:+19085308636" className="contact-link">
+                  <div className="contact-link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/>
+                    </svg>
+                  </div>
+                  <div className="contact-link-text">Phone <small>+1 908 530 8636</small></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Chatbot ── */}
+      <Chatbot open={chatOpen} setOpen={setChatOpen} />
+
+      {/* ── Footer ── */}
+      <footer>
+        <p>© {new Date().getFullYear()} <span>Gopichand Gottipati</span> · Data Analyst · United States</p>
       </footer>
-    </div>
+    </>
   );
 }
